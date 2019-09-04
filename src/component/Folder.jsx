@@ -1,5 +1,4 @@
 import * as React from "react";
-import PropTypes from 'prop-types';
 import FileTree from "./FileTree";
 import FolderImage from "../images/icons8-folder-64.png";
 import FolderOpenImage from "../images/icons8-opened-folder-64.png";
@@ -47,15 +46,13 @@ export default class Folder extends React.Component {
       <>
         <div>
           <div onClick={this.showContent} className="row">
-            {/*{<div className="col-md-2">{this.showImage()}</div>}*/}
             {this.showImage()}
-            <div className="col-md-4 text-height">{content.name}</div>
+            <div className="col-md-4 text-height"><span>{content.name}</span></div>
           </div>
         </div>
         <div className="fileTree" hidden={this.state.closeFolder}>
           <FileTree innerFile={content.children}/>
         </div>
-
       </>
     )
   }

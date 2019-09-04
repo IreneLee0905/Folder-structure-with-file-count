@@ -10,8 +10,8 @@ function FileTree(props) {
         return content.type === 'folder' ? <Folder key={index} content={content}/> :
           <File key={index} content={content}/>;
       })}
-
     </div>
   );
 }
+
 export default FileTree;

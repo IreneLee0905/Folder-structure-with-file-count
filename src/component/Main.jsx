@@ -1,5 +1,6 @@
 import React from 'react';
 import FileTree from "./FileTree";
+import {ShowReadableFileSize} from "../utils/util";
 
 
 export default class Main extends React.Component {
@@ -10,7 +11,6 @@ export default class Main extends React.Component {
       files: [],
       totalFileSize: 0,
       totalFiles: 0
-
     };
     this.getTotalFile = this.getTotalFile.bind(this);
   }
@@ -29,23 +29,21 @@ export default class Main extends React.Component {
       .then(response => {
         let files = response.data;
         this.setState({files: files});
-
         this.setState(this.getTotalFile(files));
       }).catch((error) => {
       console.log(error);
     });
   }
 
-  //get total files and total file size
+  // get total files and total file size
   getTotalFile(files) {
     let totalFiles = 0;
     let totalFileSize = 0;
 
     for (let i = 0; i < files.length; i++) {
       let content = files[i];
-      console.log(content);
       if (content.type === "file") {
-        totalFiles++;
+        totalFiles ++;
         totalFileSize += content.size;
       } else if (content.type === "folder") {
         let summary = this.getTotalFile(content.children);
@@ -55,7 +53,6 @@ export default class Main extends React.Component {
     }
 
     return {'totalFiles': totalFiles, 'totalFileSize': totalFileSize};
-
   }
 
 
@@ -70,10 +67,10 @@ export default class Main extends React.Component {
         </div>
         <hr/>
         <div className="row">
-          <h4>Total Files: {this.state.totalFiles}</h4>
+          <h5>Total Files: {this.state.totalFiles}</h5>
         </div>
         <div className="row">
-          <h4>Total Filesize:{this.state.totalFileSize}</h4>
+          <h5>Total Filesize: {ShowReadableFileSize(this.state.totalFileSize)}</h5>
         </div>
       </div>
     )
