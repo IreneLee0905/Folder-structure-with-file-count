@@ -7,27 +7,74 @@ export default class Main extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      folders: []
-    }
+      files: [],
+      totalFileSize: 0,
+      totalFiles: 0
+
+    };
+    this.getTotalFile = this.getTotalFile.bind(this);
   }
 
   componentDidMount() {
-    // folders from external link
+    // get json data from https://chal-locdrmwqia.now.sh
     fetch('https://chal-locdrmwqia.now.sh')
-      .then(promise => Promise.resolve(promise.json()))
+      .then(promise => {
+          if (!promise.ok) {
+            throw Error(promise.statusText);
+          } else {
+            return Promise.resolve(promise.json());
+          }
+        }
+      )
       .then(response => {
-        this.setState({folders: response.data}, () => {
-          console.log(this.state);
-        });
-        console.log(response);
-      });
+        let files = response.data;
+        this.setState({files: files});
+
+        this.setState(this.getTotalFile(files));
+      }).catch((error) => {
+      console.log(error);
+    });
   }
 
+  //get total files and total file size
+  getTotalFile(files) {
+    let totalFiles = 0;
+    let totalFileSize = 0;
+
+    for (let i = 0; i < files.length; i++) {
+      let content = files[i];
+      console.log(content);
+      if (content.type === "file") {
+        totalFiles++;
+        totalFileSize += content.size;
+      } else if (content.type === "folder") {
+        let summary = this.getTotalFile(content.children);
+        totalFiles += summary.totalFiles;
+        totalFileSize += summary.totalFileSize;
+      }
+    }
+
+    return {'totalFiles': totalFiles, 'totalFileSize': totalFileSize};
+
+  }
+
+
   render() {
-    let folders = this.state.folders;
+    let files = this.state.files;
     return (
-      <div>
-        <FileTree innerFile={folders} />
+      <div className="container main-page">
+        <div className="row">
+          <div className="col-md-8">
+            <FileTree innerFile={files}/>
+          </div>
+        </div>
+        <hr/>
+        <div className="row">
+          <h4>Total Files: {this.state.totalFiles}</h4>
+        </div>
+        <div className="row">
+          <h4>Total Filesize:{this.state.totalFileSize}</h4>
+        </div>
       </div>
     )
   }
