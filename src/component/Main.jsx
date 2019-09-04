@@ -10,7 +10,8 @@ export default class Main extends React.Component {
     this.state = {
       files: [],
       totalFileSize: 0,
-      totalFiles: 0
+      totalFiles: 0,
+      showError: false
     };
     this.getTotalFile = this.getTotalFile.bind(this);
   }
@@ -31,6 +32,7 @@ export default class Main extends React.Component {
         this.setState({files: files});
         this.setState(this.getTotalFile(files));
       }).catch((error) => {
+      this.setState({showError: true});
       console.log(error);
     });
   }
@@ -43,7 +45,7 @@ export default class Main extends React.Component {
     for (let i = 0; i < files.length; i++) {
       let content = files[i];
       if (content.type === "file") {
-        totalFiles ++;
+        totalFiles++;
         totalFileSize += content.size;
       } else if (content.type === "folder") {
         let summary = this.getTotalFile(content.children);
@@ -60,6 +62,9 @@ export default class Main extends React.Component {
     let files = this.state.files;
     return (
       <div className="container main-page">
+        <div className="alert alert-danger" role="alert" hidden={!this.state.showError}>
+          Error: failure in impactful strategize mindshare
+        </div>
         <div className="row">
           <div className="col-md-8">
             <FileTree innerFile={files}/>
